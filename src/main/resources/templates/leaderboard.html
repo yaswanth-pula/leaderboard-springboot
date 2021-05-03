@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security" lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta charset="ISO-8859-1">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet"
+          href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css"
+          integrity="sha384-B0vP5xmATw1+K9KRQjQERJvTumQW0nPEzvF6L/Z6nronJ3oUOFUFpCjEUQouq2+l"
+          crossorigin="anonymous">
+
+    <title>Leaderboard</title>
+</head>
+<body>
+<div class="container">
+    <h1>ZMS League</h1>
+    <!-- login -->
+    <p sec:authorize="!isAuthenticated()">
+        <a th:href="@{/login}"
+           class="btn btn-primary mb-4">
+            Login
+        </a>
+    </p>
+    <!-- logout -->
+    <div sec:authorize="isAuthenticated()">
+        <form action="#"
+              th:action="@{/logout}"
+              method="post">
+            <button class="btn btn-primary mb-4" type="submit">Logout</button>
+        </form>
+        <div>
+            <h5>Logged In As :
+                <span sec:authentication="principal.username">NOT FOUND</span>
+                <span sec:authentication="principal.authorities">NOT FOUND</span>
+            </h5>
+        </div>
+    </div>
+    <!-- Admin panel -->
+    <div sec:authorize="hasRole('ADMIN')">
+        <h3>Admin Panel</h3>
+        <!-- Admin Add New Team-->
+        <a th:href="@{/admin/add-team}" class="btn btn-info btn-sm">Add New Team</a>
+    </div>
+    <!-- Fan Club Panel-->
+    <div sec:authorize="hasRole('FAN')">
+        <h3>Hey Fan Club Member</h3>
+        <p>Hit Support Button to Support Your Fav Team</p>
+    </div>
+    <!-- Score Master -->
+    <div sec:authorize="hasRole('MASTER')">
+        <h3>Hey Score Master</h3>
+        <p>Update the LeaderBoard ASAP!</p>
+    </div>
+    <hr>
+    <table class="table table-bordered table-striped" th:if="${#lists.size(teamList) != 0}">
+        <thead class="thead-dark">
+        <tr>
+            <th scope="col">Team</th>
+            <th scope="col">Matches Played</th>
+            <th scope="col">Won</th>
+            <th scope="col">Lost</th>
+            <th scope="col">Points</th>
+            <th sec:authorize="hasRole('ADMIN')">Actions</th>
+            <th sec:authorize="hasRole('FAN')">Fan Support</th>
+            <th sec:authorize="hasRole('FAN')">Support</th>
+            <th sec:authorize="hasRole('MASTER')">Update</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr scope="row" th:each="team : ${teamList}">
+            <td th:text="${team.teamName}"></td>
+            <td th:text="${team.matchesPlayed}"></td>
+            <td th:text="${team.matchesWon}"></td>
+            <td th:text="${team.matchesLost}"></td>
+            <td th:text="${team.leaguePoints}"></td>
+
+            <!-- Admin Ops-->
+            <td sec:authorize="hasRole('ADMIN')">
+                <a th:href="@{/admin/delete-team(teamID=${team.teamId})}"
+                   class="btn btn-danger btn-sm"
+                   onclick="return confirm('Sure To Delete ?')">
+                    Delete
+                </a>
+                <a sec:authorize="hasRole('ADMIN')" th:href="@{/admin/player-detail/{teamID}(teamID=${team.teamId})}"
+                   class="btn btn-info btn-sm">
+                    Players
+                </a>
+
+            </td>
+            <!--Fan Ops -->
+            <td sec:authorize="hasRole('FAN')" th:text="${team.supportScore}"></td>
+            <td sec:authorize="hasRole('FAN')">
+                <a th:href="@{/fan/support-team(teamID=${team.teamId})}"
+                   class="btn btn-primary">
+                    Support
+                </a>
+            </td>
+            <!-- Master ops -->
+            <td sec:authorize="hasRole('MASTER')">
+                <a th:href="@{/master/update-team(teamID=${team.teamId})}"
+                   class="btn btn-info btn-sm">
+                    Update
+                </a>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+    <span th:if="${#lists.size(teamList) == 0}">
+        Leaderboard Is Empty
+    </span>
+    <hr>
+</div>
+</body>
+</html>

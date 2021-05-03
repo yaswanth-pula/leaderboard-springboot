@@ -1,0 +1,75 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security" lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet"
+          href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css"
+          integrity="sha384-B0vP5xmATw1+K9KRQjQERJvTumQW0nPEzvF6L/Z6nronJ3oUOFUFpCjEUQouq2+l"
+          crossorigin="anonymous">
+
+    <title>Update Leaderboard</title>
+</head>
+<body>
+<div class="container">
+    <h3 class="h3 mb-4">Update Team Points</h3>
+    <hr>
+    <form action="#" sec:authorize="hasRole('MASTER')" th:action="@{/master/save-update}" th:object="${oldTeam}"
+          method="POST">
+        <input type="hidden" th:field="*{teamId}">
+        <!-- Team Name-->
+        <div class="input-group mb-4 col-4">
+            <div class="input-group-prepend">
+                <span class="input-group-text">Team Name</span>
+            </div>
+            <input type="hidden" th:field="*{teamName}">
+            <p class="form-control" th:text="*{teamName}"></p>
+        </div>
+
+        <!-- Matches Played -->
+        <div class="input-group mb-4 col-3">
+            <div class="input-group-prepend">
+                <span class="input-group-text">Matches Played</span>
+            </div>
+            <input type="number" th:field="*{matchesPlayed}" class="form-control"
+                   th:errorclass="is-invalid">
+            <div class="invalid-feedback">Cannot Be Less than zero</div>
+        </div>
+
+        <!-- Matches Won -->
+        <div class="input-group mb-4 col-3">
+            <div class="input-group-prepend">
+                <span class="input-group-text">Matches Won</span>
+            </div>
+            <input type="number" th:field="*{matchesWon}" class="form-control"
+                   th:errorclass="is-invalid">
+            <div class="invalid-feedback">Cannot Be Less than zero</div>
+        </div>
+
+        <!-- Matches Lost -->
+        <div class="input-group mb-4 col-3">
+            <div class="input-group-prepend">
+                <span class="input-group-text">Matches Lost</span>
+            </div>
+            <input type="number" th:field="*{matchesLost}" class="form-control"
+                   th:errorclass="is-invalid">
+            <div class="invalid-feedback">Cannot Be Less than zero</div>
+        </div>
+
+        <!-- League Points -->
+        <div class="input-group mb-4 col-3">
+            <div class="input-group-prepend">
+                <span class="input-group-text">League Points</span>
+            </div>
+            <input type="number" th:field="*{leaguePoints}" class="form-control"
+                   th:errorclass="is-invalid">
+            <div class="invalid-feedback">Cannot Be Less than zero</div>
+        </div>
+
+        <!-- Save Button -->
+        <button type="submit" class="btn btn-info col-3">Save</button>
+    <hr>
+    <a th:href="@{/leaderboard}">Back to Leaderboard</a>
+</div>
+</body>
+</html>
