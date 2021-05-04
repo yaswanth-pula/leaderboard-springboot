@@ -26,28 +26,24 @@ public class Team {
     private int teamId;
 
     @Column(name = "team_name")
-    @NotNull
-    @DbUniqueTeamName
-    @Size(min = 1, message = "Team Name Should be atleast 1 char")
-
     private String teamName;
 
-    @Min(value = 0)
+
     @Column(name = "matches_played")
 
     private int matchesPlayed;
 
-    @Min(value = 0)
+
     @Column(name = "matches_won")
 
     private int matchesWon;
 
-    @Min(value = 0)
+
     @Column(name = "matches_lost")
 
     private int matchesLost;
 
-    @Min(value = 0)
+
     @Column(name = "league_points")
 
     private int leaguePoints;

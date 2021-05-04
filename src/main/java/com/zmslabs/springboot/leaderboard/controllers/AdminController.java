@@ -1,5 +1,6 @@
 package com.zmslabs.springboot.leaderboard.controllers;
 
+import com.zmslabs.springboot.leaderboard.dto.TeamDTO;
 import com.zmslabs.springboot.leaderboard.entity.Player;
 import com.zmslabs.springboot.leaderboard.entity.Team;
 import com.zmslabs.springboot.leaderboard.service.LeaderboardService;
@@ -29,13 +30,13 @@ public class AdminController {
 
     @GetMapping("/add-team")
     public String renderAddNewTeam(Model model) {
-        model.addAttribute("freshTeam", new Team());
+        model.addAttribute("freshTeam", new TeamDTO());
         logger.info("Operation Add New Team");
         return "team-add";
     }
 
     @PostMapping("/save-team")
-    public String saveTeam(@Valid @ModelAttribute("freshTeam") Team team, BindingResult bindingResult) {
+    public String saveTeam(@Valid @ModelAttribute("freshTeam") TeamDTO team, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             logger.error("New Team Validation Error" + bindingResult);
             return "team-add";

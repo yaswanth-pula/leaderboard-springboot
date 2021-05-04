@@ -1,5 +1,6 @@
 package com.zmslabs.springboot.leaderboard.service;
 
+import com.zmslabs.springboot.leaderboard.dto.TeamDTO;
 import com.zmslabs.springboot.leaderboard.entity.Player;
 import com.zmslabs.springboot.leaderboard.entity.Team;
 
@@ -9,8 +10,8 @@ public interface LeaderboardService {
 
     List<Team> getAllTeams();
 
-    Team addNewTeam(Team freshTeam);
-    void updateTeam(Team oldTeam);
+    Team addNewTeam(TeamDTO freshTeam);
+    void updateTeam(TeamDTO oldTeam);
 
     Team findTeamById(int teamID);
 

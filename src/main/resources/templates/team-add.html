@@ -16,7 +16,6 @@
     <hr>
     <form action="#" sec:authorize="hasRole('ADMIN')" th:action="@{/admin/save-team}" th:object="${freshTeam}"
           method="POST">
-        <input type="hidden" th:field="*{teamId}">
         <!-- Team Name-->
         <div class="input-group mb-4 col-4">
             <div class="input-group-prepend">

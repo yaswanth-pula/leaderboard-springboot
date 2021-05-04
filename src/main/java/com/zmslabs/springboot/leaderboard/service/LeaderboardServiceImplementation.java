@@ -1,5 +1,8 @@
 package com.zmslabs.springboot.leaderboard.service;
 
+import com.zmslabs.springboot.leaderboard.controllers.MasterController;
+import com.zmslabs.springboot.leaderboard.dto.DtoConverter;
+import com.zmslabs.springboot.leaderboard.dto.TeamDTO;
 import com.zmslabs.springboot.leaderboard.entity.Fantasy;
 import com.zmslabs.springboot.leaderboard.entity.Player;
 import com.zmslabs.springboot.leaderboard.entity.Team;
@@ -7,6 +10,8 @@ import com.zmslabs.springboot.leaderboard.exception.ResourceNotFoundException;
 import com.zmslabs.springboot.leaderboard.repository.FantasyRepository;
 import com.zmslabs.springboot.leaderboard.repository.PlayerRepository;
 import com.zmslabs.springboot.leaderboard.repository.TeamRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -19,15 +24,16 @@ public class LeaderboardServiceImplementation implements LeaderboardService {
     private TeamRepository teamRepository;
     private FantasyRepository fantasyRepository;
     private PlayerRepository playerRepository;
-
+    private DtoConverter dtoConverter;
 
     @Autowired
     public LeaderboardServiceImplementation(TeamRepository teamRepository,
                                             FantasyRepository fantasyRepository,
-                                            PlayerRepository playerRepository) {
+                                            PlayerRepository playerRepository,DtoConverter dtoConverter) {
         this.teamRepository = teamRepository;
         this.fantasyRepository = fantasyRepository;
         this.playerRepository = playerRepository;
+        this.dtoConverter = dtoConverter;
     }
 
     public LeaderboardServiceImplementation() {
@@ -40,18 +46,20 @@ public class LeaderboardServiceImplementation implements LeaderboardService {
     }
 
     @Override
-    public Team addNewTeam(Team freshTeam) {
-        return teamRepository.save(freshTeam);
+    public Team addNewTeam(TeamDTO freshTeamDto) {
+        Team teamEntity = dtoConverter.getTeamEntityFromTeamDto(freshTeamDto);
+        return teamRepository.save(teamEntity);
     }
 
     @Override
-    public void updateTeam(Team oldTeam) {
-        int teamID = oldTeam.getTeamId();
-        List<Player> teamPlayerList =  this.getPlayerList(teamID);
-        oldTeam.setPlayers(teamPlayerList);
+    public void updateTeam(TeamDTO oldTeamDto) {
 
-        // no validation errors
-        this.addNewTeam(oldTeam);
+        Team oldTeamEntity = dtoConverter.getTeamEntityFromTeamDto(oldTeamDto);
+        int teamID = oldTeamEntity.getTeamId();
+        List<Player> teamPlayerList =  this.getPlayerList(teamID);
+        oldTeamEntity.setPlayers(teamPlayerList);
+
+        teamRepository.save(oldTeamEntity);
     }
 
     @Override
@@ -59,7 +67,6 @@ public class LeaderboardServiceImplementation implements LeaderboardService {
         Optional<Team> dbResult = teamRepository.findById(teamID);
         if (dbResult.isEmpty())
             throw new ResourceNotFoundException("Team with ID " + teamID + " Not Found");
-
         return dbResult.get();
     }
 
@@ -81,7 +88,7 @@ public class LeaderboardServiceImplementation implements LeaderboardService {
     public void updateTeamSupport(int supportTeamID) {
         Team currentTeam = this.findTeamById(supportTeamID);
 
-        Fantasy fantasy = currentTeam.getFantasy();
+        Fantasy fantasy = (currentTeam.getFantasy());
         if (fantasy == null) {
             fantasy = new Fantasy(0, 0, currentTeam);
         }
