@@ -62,6 +62,14 @@ public class Team {
     private List<Player> players;
 
 
+    public Team(String teamName, int matchesPlayed, int matchesWon, int matchesLost, int leaguePoints) {
+        this.teamName = teamName;
+        this.matchesPlayed = matchesPlayed;
+        this.matchesWon = matchesWon;
+        this.matchesLost = matchesLost;
+        this.leaguePoints = leaguePoints;
+    }
+
     // helpers
     @Transient
     private int supportScore;
