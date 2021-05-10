@@ -6,6 +6,7 @@ import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.Comparator;
 import java.util.List;
@@ -18,10 +19,14 @@ import static org.junit.jupiter.api.Assertions.*;
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+//@SpringBootTest
 public class TeamRepositoryTests {
 
     @Autowired
     private TeamRepository teamRepository;
+
+    private MockMvc mockMvc;
+
 
     private int testTeamID;
 
@@ -33,7 +38,7 @@ public class TeamRepositoryTests {
     @Test
     @DisplayName("Get All Teams Sorted ByPoints DESC Test")
     @Order(1)
-    public void testGetAllTeamsByPointsDESCTest() {
+    public void getAllTeamsByPointsDESCTest() {
         List<Team> dbTeamList = teamRepository.findAll();
         List<Team> sortedDBTeamList = teamRepository.findAllByOrderByLeaguePointsDesc();
         // desc sort db list based on League Points
@@ -49,7 +54,7 @@ public class TeamRepositoryTests {
     @DisplayName("Insert New Team Test")
     @Order(2)
     public void insertNewTeamTest() {
-        Team team = new Team("england", 2, 0, 2, 0);
+        Team team = new Team("england", 2, 0, 2, 2);
         Team testTeam = teamRepository.save(team);
 
         assertEquals(team, testTeam);
@@ -61,8 +66,7 @@ public class TeamRepositoryTests {
     @DisplayName("Find A Team By valid Id")
     @Order(3)
     public void findTeamByIdTest() {
-        Optional<Team> resultTeam = teamRepository.findById(testTeamID);
-        assert resultTeam.isPresent();
+        assertNotNull(getTestTeamByID());
     }
 
 
@@ -71,7 +75,7 @@ public class TeamRepositoryTests {
     @Order(4)
     public void updateTeamByTest() {
         findTeamByIdTest();
-        Team existingTeam = getTeamByID();
+        Team existingTeam = getTestTeamByID();
 
         existingTeam.setMatchesPlayed(8);
         existingTeam.setMatchesWon(6);
@@ -91,15 +95,33 @@ public class TeamRepositoryTests {
 
     @Test
     @DisplayName("Delete a Team Test")
-    @Order(4)
-    public void deleteTeamTest(){
+    @Order(5)
+    public void deleteTeamTest() {
+        assertNotNull(getTestTeamByID());
         teamRepository.deleteById(testTeamID);
-        assertNull(getTeamByID());
+        assertNull(getTestTeamByID());
+    }
+
+    @Test
+    @DisplayName("Get All Team Names Test")
+    @Order(6)
+    public void getAllTeamNamesTest() {
+        List<Team> dbTeamList = teamRepository.findAll();
+        // extract team name
+        List<String> dbTeamNameList = dbTeamList.stream()
+                .map(Team::getTeamName)
+                .collect(Collectors.toList());
+        // custom query method list
+        List<String> queryTeamNameList = teamRepository.findAllByTeamName();
+
+        // test for both are equal
+        assertEquals(dbTeamNameList, queryTeamNameList);
+
     }
 
 
     // helper methods
-    public Team getTeamByID(){
+    public Team getTestTeamByID() {
         Optional<Team> result = teamRepository.findById(testTeamID);
         return result.orElse(null);
     }
