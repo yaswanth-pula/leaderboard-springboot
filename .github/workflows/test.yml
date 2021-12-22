@@ -26,4 +26,4 @@ jobs:
       run: ls -a
       
     - name: read test.json
-      run: cat test.json
+      run: readlink -f test.json
