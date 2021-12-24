@@ -24,6 +24,7 @@ jobs:
         
     - name: view all files
       run: ls -a
-      
+    - name: check maven version
+      run: mvn --version
     - name: read test.json
       run: readlink -f test.json
