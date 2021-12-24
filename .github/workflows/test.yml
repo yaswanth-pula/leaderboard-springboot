@@ -24,6 +24,11 @@ jobs:
         
     - name: view all files
       run: ls -a
+    - name: insatll maven
+      uses: stCarolas/setup-maven@v4.2
+      with:
+        maven-version: 3.2.5
+      
     - name: check maven version
       run: mvn --version
     - name: read test.json
